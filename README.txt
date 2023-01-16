@@ -1,2 +1,2 @@
 # RpgSkillable
-<a href="https://discord.gg/DMrwFpgucF" target="_blank"><img src="https://img.shields.io/badge/dragoni%20mods-join-blue" alt="Discord"></a>
+[![Discord](https://img.shields.io/discord/313125603924639766.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/DMrwFpgucF)
