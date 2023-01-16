@@ -235,7 +235,7 @@ public class Config {
         USE_ATTRIBUTE_LOCKS = builder.define("useAttributeLocks", true);
         
         builder.comment("Skill requirements for attributes. Used if useAttributeLocks is true.", "Format: attribute skill:level_required_per_attribute_level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
-        ATTRIBUTE_SKILL_LOCKS = builder.defineList("attributeSkillLocks", Arrays.asList("generic.attack_damage strength:1", "generic.armor endurance:2", "generic.attack_speed dexterity:4", "generic.movement_speed dexterity:2", "generic.armor_toughness vigor:3", "ars_nouveau.perk.mana_regen mind:5", "ars_nouveau.perk.spell_damage intelligence:1", "ars_nouveau.perk.flat_max_mana mind:0.1", "attack_range dexterity:4"), obj -> true);
+        ATTRIBUTE_SKILL_LOCKS = builder.defineList("attributeSkillLocks", Arrays.asList("generic.attack_damage strength:1", "generic.armor endurance:2", "generic.attack_speed dexterity:5", "generic.movement_speed dexterity:2", "generic.armor_toughness vigor:3", "ars_nouveau.perk.mana_regen mind:5", "ars_nouveau.perk.spell_damage intelligence:1", "ars_nouveau.perk.flat_max_mana mind:0.1", "attack_range dexterity:4"), obj -> true);
         
         builder.comment("Attribute values under this number will be omitted from vigor skill locks.");
         VIGOR_OMIT = builder.defineInRange("vigorOmit", 0.0, 0.0, 100.0);

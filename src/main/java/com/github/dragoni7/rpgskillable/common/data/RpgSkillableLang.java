@@ -15,6 +15,10 @@ public class RpgSkillableLang extends LanguageProvider  {
 	@Override
 	protected void addTranslations() {
 		
+		// item
+		add(RpgSkillable.LARVAL_TEAR.get(), "Larval Tear");
+		add("rpgskillable.tooltip.larval_tear", "Resets all skills on use. Returns xp levels equal to the total amount of levels one had");
+		
 		// effects
 		add(RpgSkillableEffects.ATROPHY.get(), "Atrophy");
 		add(RpgSkillableEffects.ENCUMBERED.get(), "Encumbered");
@@ -45,6 +49,12 @@ public class RpgSkillableLang extends LanguageProvider  {
 		// JEED
 		add("effect.rpgskillable.atrophy.description", "Severly reduces attack speed, damage, and spell damage.");
 		add("effect.rpgskillable.encumbered.description", "Severly reduces movespeed and prevents jumping. Drains feathers.");
+		add("effect.rpgskillable.vigor.description", "Increases max health by 4 per level.");
+		add("effect.rpgskillable.strengthened.description", "Increases attack damage by 1 per level. Also decreases attack speed by 0.1 per level.");
+		add("effect.rpgskillable.endurance.description", "Adds regenerating endurance feathers per level");
+		add("effect.rpgskillable.dexterity.description", "Increases attack speed by 0.15 and increases movespeed per level.");
+		add("effect.rpgskillable.intelligence.description", "Increases spell damage by 1 per level.");
+		add("effect.rpgskillable.mind.description", "Increases mana by 20% per level.");
 	}
 
 }

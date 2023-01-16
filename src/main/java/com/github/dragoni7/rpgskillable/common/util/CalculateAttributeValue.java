@@ -11,7 +11,7 @@ public class CalculateAttributeValue {
 		
 		double d0 = a.getDefaultValue();
 		
-		// determine item attribute. Based off AttributeInstance.calculateValue()
+		// determine item attribute value. Based off AttributeInstance.calculateValue()
 		for (AttributeModifier modifier : modifiers.stream().filter(m -> m.getOperation() == AttributeModifier.Operation.ADDITION).toList()) {
 			d0 += modifier.getAmount();
 		}

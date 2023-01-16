@@ -5,13 +5,21 @@ import com.github.dragoni7.rpgskillable.client.Tooltip;
 import com.github.dragoni7.rpgskillable.client.screen.InventoryTabs;
 import com.github.dragoni7.rpgskillable.common.CuriosCompat;
 import com.github.dragoni7.rpgskillable.common.EventHandler;
+import com.github.dragoni7.rpgskillable.common.LarvalTearItem;
 import com.github.dragoni7.rpgskillable.common.commands.Commands;
 import com.github.dragoni7.rpgskillable.common.effects.RpgSkillableEffects;
 import com.github.dragoni7.rpgskillable.common.network.RequestLevelUp;
 import com.github.dragoni7.rpgskillable.common.network.SyncToClient;
+import com.hollingsworth.arsnouveau.common.datagen.DungeonLootGenerator;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -23,6 +31,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import top.theillusivec4.curios.Curios;
 
 import java.util.Optional;
@@ -36,10 +47,17 @@ public class RpgSkillable
     public static final Logger LOGGER = LogUtils.getLogger();
     public static SimpleChannel NETWORK;
     
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, RpgSkillable.MODID);
+    public static final RegistryObject<Item> LARVAL_TEAR = ITEMS.register("larval_tear", () -> new LarvalTearItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).tab(CreativeModeTab.TAB_MISC)));
+    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, RpgSkillable.MODID);
+    public static final RegistryObject<Codec<DungeonLootGenerator.DungeonLootEnhancerModifier>> LARVAL_TEAR_LOOT = GLM.register("table_loot_mod", DungeonLootGenerator.DungeonLootEnhancerModifier.CODEC);
+    
     public RpgSkillable()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         RpgSkillableEffects.MOB_EFFECTS.register(modEventBus);
+        ITEMS.register(modEventBus);
+        GLM.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
         

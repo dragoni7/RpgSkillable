@@ -83,7 +83,7 @@ public class Tooltip {
 									double levelRequirement = enchantRequirement.getLevel();
 									int enchantLevel = enchantRequirements.get(requirementsPerEnchant);
 									
-									double finalValue = enchantLevel == 1 ? levelRequirement : levelRequirement + (enchantLevel * Config.getEnchantmentRequirementIncrease());
+									int finalValue = (int) (enchantLevel == 1 ? Math.round(levelRequirement) : Math.round(levelRequirement + (enchantLevel * Config.getEnchantmentRequirementIncrease())));
 									
 									ChatFormatting color = SkillModel.get().getSkillLevel(enchantRequirement.getSkill()) >= finalValue ? ChatFormatting.GREEN : ChatFormatting.RED;
 									tooltips.add(Component.translatable(enchantRequirement.getSkill().displayName).append(" " + finalValue).withStyle(color));
@@ -112,7 +112,7 @@ public class Tooltip {
 				double attributeValue = CalculateAttributeValue.get(a, attributeModifiers.get(a));
 				
 				for (Requirement requirement : attributeRequirements) {
-					int finalAmount = (int) (requirement.getLevel() * attributeValue);
+					int finalAmount = (int) Math.round(requirement.getLevel() * attributeValue);
 					// if item is omitted
 					if (attributeValue <= Config.getSkillOmitLevel(requirement.getSkill())) {
 						continue;

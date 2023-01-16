@@ -16,6 +16,6 @@ public class EffectDexterity extends MobEffect {
 		super(MobEffectCategory.BENEFICIAL, 0Xeddf82);
 		
 		this.addAttributeModifier(Attributes.ATTACK_SPEED, ATTACK_SPEED_UUID.toString(), 0.15f, AttributeModifier.Operation.ADDITION);
-		this.addAttributeModifier(Attributes.MOVEMENT_SPEED, MOVE_SPEED_UUID.toString(), 0.1f, AttributeModifier.Operation.MULTIPLY_BASE);
+		this.addAttributeModifier(Attributes.MOVEMENT_SPEED, MOVE_SPEED_UUID.toString(), 0.15f, AttributeModifier.Operation.MULTIPLY_BASE);
 	}
 }

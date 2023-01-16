@@ -40,7 +40,7 @@ public class EventHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onLivingTick(PlayerTickEvent event) {
 		
-		if (event.side == LogicalSide.SERVER && !event.player.isCreative() && event.player != null) {
+		if (event.side == LogicalSide.SERVER && !event.player.isCreative() && !event.player.isDeadOrDying() && event.player != null) {
 			
 			Player player = event.player;
 			SkillModel model = SkillModel.get(player);
@@ -81,7 +81,7 @@ public class EventHandler {
 			
 			// update beneficial effects
 			if (player instanceof ServerPlayer) {
-				model.updateEffects((ServerPlayer) player);
+				model.updateEffectsOnTick((ServerPlayer) player);
 			}
 		}
 	}
@@ -231,7 +231,6 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onPlayerClone(PlayerEvent.Clone event) {
-
 		if (event.isWasDeath()) {
 			event.getOriginal().reviveCaps();
 			SkillModel.get(event.getEntity()).copyForRespawn(SkillModel.get(event.getOriginal()));
@@ -241,15 +240,33 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		SyncToClient.send(event.getEntity());
+		Player player = event.getEntity();
+		
+		if (player instanceof ServerPlayer) {
+			SkillModel model = SkillModel.get(player);
+			model.updateEffects((ServerPlayer) player);
+		}
 	}
 
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		SyncToClient.send(event.getEntity());
+		Player player = event.getEntity();
+		
+		if (player instanceof ServerPlayer) {
+			SkillModel model = SkillModel.get(player);
+			model.updateEffects((ServerPlayer) player);
+		}
 	}
 
 	@SubscribeEvent
 	public void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		SyncToClient.send(event.getEntity());
+		Player player = event.getEntity();
+		
+		if (player instanceof ServerPlayer) {
+			SkillModel model = SkillModel.get(player);
+			model.updateEffects((ServerPlayer) player);
+		}
 	}
 }

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.github.dragoni7.rpgskillable.Config;
 import com.github.dragoni7.rpgskillable.common.effects.RpgSkillableEffects;
-import com.github.dragoni7.rpgskillable.common.network.SyncToClient;
 import com.github.dragoni7.rpgskillable.common.skill.Requirement;
 import com.github.dragoni7.rpgskillable.common.skill.Skill;
 import com.github.dragoni7.rpgskillable.common.util.CalculateAttributeValue;
@@ -98,53 +97,62 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 		
 		int amp = determineEffectAmpAmount(skill);
 		
-		if (amp > -1) {
+		if (amp != -1) {
 			MobEffect effect = EFFECT_BY_SKILL.get(skill);
 
 			if (player.hasEffect(effect)) {
 				player.removeEffect(effect);
 			}
 
-			player.addEffect(new MobEffectInstance(effect, EFFECT_DURATION, amp));
+			player.addEffect(new MobEffectInstance(effect, EFFECT_DURATION, amp, false, false, true));
 		}
 	}
 
 	public int determineEffectAmpAmount(Skill skill) {
 		int skillLevel = getSkillLevel(skill);
 		int levelPerEffect = Config.getLevelPerEffect();
-		return skillLevel % levelPerEffect == 0 ? (skillLevel / levelPerEffect) - 1 : -1;
+		int amp = (int) Math.floor(skillLevel / levelPerEffect);
+		
+		return amp == 0 ? -1 : amp - 1;
 	}
 	
-	public void updateEffects(ServerPlayer player) {
+	public void updateEffectsOnTick(ServerPlayer player) {
 		
 		updateTick++;
 		
 		if (updateTick == UPDATE_INTERVAL) {
-			for (Skill skill : EFFECT_BY_SKILL.keySet()) {
-				int amp = determineEffectAmpAmount(skill);
-				MobEffect effect = EFFECT_BY_SKILL.get(skill);
-				if (amp > -1) {
-					
-					if (player.hasEffect(effect)) {
-						if (player.getEffect(effect).getAmplifier() >= amp) {
-							// refresh or downgrade effect
-							player.removeEffect(effect);
-							player.addEffect(new MobEffectInstance(effect, EFFECT_DURATION, amp));
-						}
-						else {
-							// update effect
-							player.removeEffect(effect);
-							player.addEffect(new MobEffectInstance(effect, EFFECT_DURATION, amp));
-						}
-					}
-				}
-				else {
-					player.removeEffect(effect);
-				}
-			}
-			
-			SyncToClient.send(player);
+			updateEffects(player);
 			updateTick = 0;
+		}
+	}
+
+	public void updateEffects(ServerPlayer player) {
+		
+		for (Skill skill : EFFECT_BY_SKILL.keySet()) {
+
+			int amp = determineEffectAmpAmount(skill);
+			MobEffect effect = EFFECT_BY_SKILL.get(skill);
+			MobEffectInstance instance = new MobEffectInstance(EFFECT_BY_SKILL.get(skill), EFFECT_DURATION, amp,
+					false, false, true);
+
+			if (amp != -1) {
+				if (player.hasEffect(effect)) {
+					if (player.getEffect(effect).getAmplifier() >= amp) {
+						// refresh or downgrade effect
+						player.removeEffect(effect);
+						player.addEffect(instance);
+					} else {
+						// update effect
+						player.removeEffect(effect);
+						player.addEffect(instance);
+					}
+				} else {
+					// add the effect back
+					player.addEffect(instance);
+				}
+			} else {
+				player.removeEffect(effect);
+			}
 		}
 	}
 
@@ -179,7 +187,7 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 					double attributeValue = CalculateAttributeValue.get(a, attributeModifiers.get(a));
 
 					for (Requirement requirement : attributeRequirements) {
-						int finalAmount = (int) (requirement.getLevel() * attributeValue);
+						int finalAmount = (int) Math.round(requirement.getLevel() * attributeValue);
 						// if item is omitted
 						if (attributeValue <= Config.getSkillOmitLevel(requirement.getSkill())) {
 							continue;

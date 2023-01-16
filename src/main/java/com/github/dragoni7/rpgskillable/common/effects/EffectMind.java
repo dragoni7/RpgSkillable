@@ -17,7 +17,7 @@ public class EffectMind extends MobEffect {
 	protected EffectMind() {
 		super(MobEffectCategory.BENEFICIAL, 0X373f8c);
 		if (ModList.get().isLoaded(ArsNouveau.MODID)) {
-			this.addAttributeModifier(PerkAttributes.MAX_MANA_BONUS.get(), MAX_MANA_BONUS.toString(), 0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL);
+			this.addAttributeModifier(PerkAttributes.MAX_MANA_BONUS.get(), MAX_MANA_BONUS.toString(), 0.2f, AttributeModifier.Operation.MULTIPLY_TOTAL);
 		}
 	}
 

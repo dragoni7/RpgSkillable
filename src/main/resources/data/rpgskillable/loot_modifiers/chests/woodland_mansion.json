@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:chests/woodland_mansion"
+    }
+  ],
+  "table": "rpgskillable:chests_addition/woodland_mansion",
+  "type": "rpgskillable:table_loot_mod"
+}
