@@ -27,3 +27,7 @@ When creating a GitHub issue stating the mod and forge version and including a l
 ## Feedback and Suggestions
 
 I am open to feedback for this mod! Feel free to join the discord for this purpose
+
+## Download
+
+https://www.curseforge.com/minecraft/mc-mods/rpgskillable
