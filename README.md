@@ -6,11 +6,16 @@
 RpgSkillable is a modification of the [rereskillable mod](https://www.google.com/search?client=firefox-b-1-d&q=rereskillable+curseforge) that was abandoned. Thanks to the license and permission statement of the author, this mod was possible.
 
 Major differences in RpgSkillable include:
+
   Renaming and reduction of skills
+  
   Additional configurability
+  
   New textures
+  
   New positive and negative effects
-  Additional intergration with mods
+  
+  Additional integration with mods
   
 This mod was developed with additional mods in mind, therefore to get the most out of it please consider playing with [Elenai Dodge 2](https://www.curseforge.com/minecraft/mc-mods/elenai-dodge-2) and [Ars Nouveau](https://www.curseforge.com/minecraft/mc-mods/ars-nouveau)
 
@@ -22,3 +27,7 @@ When creating a GitHub issue stating the mod and forge version and including a l
 ## Feedback and Suggestions
 
 I am open to feedback for this mod! Feel free to join the discord for this purpose
+
+## Download
+
+https://www.curseforge.com/minecraft/mc-mods/rpgskillable
