@@ -1,5 +1,8 @@
 package com.github.dragoni7.rpgskillable.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.github.dragoni7.rpgskillable.Config;
 import com.github.dragoni7.rpgskillable.RpgSkillable;
 import com.github.dragoni7.rpgskillable.common.capabilities.SkillCapability;
@@ -18,7 +21,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -267,6 +276,21 @@ public class EventHandler {
 		if (player instanceof ServerPlayer) {
 			SkillModel model = SkillModel.get(player);
 			model.updateEffects((ServerPlayer) player);
+		}
+	}
+	
+	public static final ArrayList<ResourceLocation> LOOT_TABLES = new ArrayList<>(Arrays.asList(
+			BuiltInLootTables.ANCIENT_CITY, BuiltInLootTables.SIMPLE_DUNGEON, BuiltInLootTables.BURIED_TREASURE,
+			BuiltInLootTables.DESERT_PYRAMID, BuiltInLootTables.JUNGLE_TEMPLE, BuiltInLootTables.STRONGHOLD_LIBRARY,
+			BuiltInLootTables.WOODLAND_MANSION));
+	
+	// add larval tear to chests
+	@SubscribeEvent
+	public void onChestGenerated(LootTableLoadEvent event) {
+		if (LOOT_TABLES.contains(event.getName())) {
+			final var larvalTear = LootItem.lootTableItem(RpgSkillable.LARVAL_TEAR.get()).setWeight(4);
+			LootPool.Builder builder = new LootPool.Builder().name("larval_tear").add(larvalTear).when(LootItemRandomChanceCondition.randomChance(0.4f)).setRolls(UniformGenerator.between(0, 1));
+			event.getTable().addPool(builder.build());
 		}
 	}
 }

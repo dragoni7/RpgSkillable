@@ -13,8 +13,7 @@ public class DataGenerators {
 		
 		DataGenerator generator = event.getGenerator();
 		
-		if (event.includeClient()) {
-			generator.addProvider(true, new RpgSkillableLang(generator, "en_us"));
-		}
+		//generator.addProvider(event.includeServer(), new RpgSkillableDungeonLoot(event.getGenerator(), RpgSkillable.MODID));
+		generator.addProvider(event.includeClient(), new RpgSkillableLang(generator, "en_us"));
 	}
 }
