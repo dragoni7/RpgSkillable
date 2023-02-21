@@ -32,15 +32,21 @@ public class Tooltip {
 			
 			ItemStack itemStack = event.getItemStack();
 			List<Component> tooltips = event.getToolTip();
+			SkillModel skillModel = SkillModel.get();
+			
+			// check if blacklisted
+			if (skillModel.isBlacklisted(ForgeRegistries.ITEMS.getKey(itemStack.getItem()))) {
+				return;
+			}
 			
 			// add attribute lock tooltips.
 			if (Config.getIfUseAttributeLocks()) {
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.MAINHAND, itemStack);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.OFFHAND, itemStack);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.CHEST, itemStack);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.FEET, itemStack);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.HEAD, itemStack);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.LEGS, itemStack);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.MAINHAND, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.OFFHAND, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.CHEST, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.FEET, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.HEAD, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.LEGS, itemStack, skillModel);
 			}
 			
 			// add manually set skill lock tooltips.
@@ -49,7 +55,7 @@ public class Tooltip {
 			if (requirements != null) {
 				for (Requirement requirement : requirements) {
 					
-					ChatFormatting color = SkillModel.get().getSkillLevel(requirement.getSkill()) >= requirement.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
+					ChatFormatting color = skillModel.getSkillLevel(requirement.getSkill()) >= requirement.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
 					tooltips.add(Component.translatable(requirement.getSkill().displayName).append(" " + requirement.getLevel()).withStyle(color));
 				}
 			}
@@ -85,7 +91,7 @@ public class Tooltip {
 									
 									int finalValue = (int) (enchantLevel == 1 ? Math.round(levelRequirement) : Math.round(levelRequirement + (enchantLevel * Config.getEnchantmentRequirementIncrease())));
 									
-									ChatFormatting color = SkillModel.get().getSkillLevel(enchantRequirement.getSkill()) >= finalValue ? ChatFormatting.GREEN : ChatFormatting.RED;
+									ChatFormatting color = skillModel.getSkillLevel(enchantRequirement.getSkill()) >= finalValue ? ChatFormatting.GREEN : ChatFormatting.RED;
 									tooltips.add(Component.translatable(enchantRequirement.getSkill().displayName).append(" " + finalValue).withStyle(color));
 								}
 							}
@@ -96,7 +102,7 @@ public class Tooltip {
 		}
 	}
 	
-	private void addAttributeRestrictionTooltips(List<Component> tooltips, EquipmentSlot slot, ItemStack stack) {
+	private void addAttributeRestrictionTooltips(List<Component> tooltips, EquipmentSlot slot, ItemStack stack, SkillModel skillModel) {
 		
 		Multimap<Attribute, AttributeModifier> attributeModifiers = stack.getAttributeModifiers(slot);
 		
@@ -118,7 +124,7 @@ public class Tooltip {
 						continue;
 					}
 					
-					ChatFormatting color = SkillModel.get().getSkillLevel(requirement.getSkill()) >= finalAmount ? ChatFormatting.GREEN : ChatFormatting.RED;
+					ChatFormatting color = skillModel.getSkillLevel(requirement.getSkill()) >= finalAmount ? ChatFormatting.GREEN : ChatFormatting.RED;
 					tooltips.add(Component.translatable(requirement.getSkill().displayName).append(" " + (finalAmount)).withStyle(color));
 				}
 			}

@@ -1,5 +1,6 @@
 package com.github.dragoni7.rpgskillable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +30,11 @@ public class Config {
 	private static final ForgeConfigSpec.DoubleValue DEX_OMIT;
 	private static final ForgeConfigSpec.DoubleValue MIND_OMIT;
 	private static final ForgeConfigSpec.IntValue EFFECT_PER_LEVEL;
+	
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENCHANT_SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ATTRIBUTE_SKILL_LOCKS;
+	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> IGNORED;
 	
 	private static boolean deathReset;
 	private static boolean effectDetriment;
@@ -48,9 +51,11 @@ public class Config {
 	private static double dexOmit;
 	private static double mindOmit;
 	private static int effectPerLevel;
+	
 	private static final Map<String, Requirement[]> skillLocks = new HashMap<>();
 	private static final Map<String, Requirement[]> enchantSkillLocks = new HashMap<>();
 	private static final Map<String, Requirement[]> attributeSkillLocks = new HashMap<>();
+	private static final List<String> ignored = new ArrayList<>();
 	
 	static {
 		
@@ -62,19 +67,19 @@ public class Config {
         builder.comment("Whether the player should be inflicted with negative effects while wielding items with unmet requirements, or to cancel the attack and change equipment events with unmet requirements. Curios are always dropped.");
         EFFECT_DETRIMENT = builder.define("effectDetriment", true);
         
-        builder.comment("Starting cost of upgrading to level 2, in levels.");
+        builder.comment("Initial cost for upgrading a skill, in levels.");
         STARTING_COST = builder.defineInRange("startingCost", 5, 0, 10);
         
-        builder.comment("Amount of levels added to the cost with each upgrade (use 0 for constant cost).");
+        builder.comment("Increase to cost per level obtained. (use 0 for constant cost).");
         COST_INCREASE = builder.defineInRange("costIncrease", 1, 0, 10);
         
         builder.comment("Maximum level each skill can be upgraded to.");
-        MAXIMUM_LEVEL = builder.defineInRange("maximumLevel", 31, 2, 100);
+        MAXIMUM_LEVEL = builder.defineInRange("maximumLevel", 31, 2, Integer.MAX_VALUE);
         
         builder.comment("Maximum levels the player can have. This is the sum of all skill levels.");
-        MAXIMUM_LEVEL_TOTAL = builder.defineInRange("maximumLevelTotal", 66, 6, 100);
+        MAXIMUM_LEVEL_TOTAL = builder.defineInRange("maximumLevelTotal", 66, 6, Integer.MAX_VALUE);
         
-        builder.comment("How many levels are required per level of positive skill effect. Setting this to 6 will grant a level of positive effect per 6 skill levels.");
+        builder.comment("How many levels are required per level of positive skill effect. Example: setting this to 6 will grant a level of positive effect ever 6 levels in that skill.");
         EFFECT_PER_LEVEL = builder.defineInRange("effectPerLevel", 6, 1, 100);
         
         builder.comment("Manually set skill requirements for blocks, items, or riding entities. Can be used alongside attribute skill locks, though overlap should be avoided.", "Format: mod:id skill:level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
@@ -231,7 +236,7 @@ public class Config {
         builder.comment("How much to increase enchantment requirement per enchantment level.");
         ENCHANT_LEVEL_INCREASE = builder.defineInRange("enchantLevelIncrease", 4, 1, 100);
         
-        builder.comment("Use the attribute locks list to lock item usage based on their attributes and skill level. Requirements are checked for attributes first before manually set skill locks.");
+        builder.comment("Use the attribute locks list to lock item usage based on their attributes and skill level. Requirements are checked for attributes first before manually set skill locks. Useful if you're lazy and don't want manually set skill locks for every gear item.");
         USE_ATTRIBUTE_LOCKS = builder.define("useAttributeLocks", true);
         
         builder.comment("Skill requirements for attributes. Used if useAttributeLocks is true.", "Format: attribute skill:level_required_per_attribute_level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
@@ -255,10 +260,14 @@ public class Config {
         builder.comment("Attribute values under this number will be omitted from mind skill locks.");
         MIND_OMIT = builder.defineInRange("mindOmit", 0.0, 0.0, 100.0);
         
+        builder.comment("Requirements blacklist. Entries in here will not have any skill locks applied.", "Format: mod_id:item");
+        IGNORED = builder.defineList("ignored", Arrays.asList("minecraft:wooden_axe"), obj -> true);
+        
         CONFIG_SPEC = builder.build();
 	}
 	
 	public static void load() {
+		
 		deathReset = DEATH_RESET.get();
 		effectDetriment = EFFECT_DETRIMENT.get();
 		useAttributeLocks = USE_ATTRIBUTE_LOCKS.get();
@@ -318,6 +327,11 @@ public class Config {
             }
             
             attributeSkillLocks.put(entry[0], requirements);
+        }
+        
+        for (String line : IGNORED.get())
+        {   
+            ignored.add(line);
         }
 	}
 
@@ -392,6 +406,10 @@ public class Config {
 	
 	public static Requirement[] getAttributeRequirements(String name) {
 		return attributeSkillLocks.get(name);
+	}
+	
+	public static List<String> getBlacklist() {
+		return ignored;
 	}
 
 	public static ForgeConfigSpec getConfig() {

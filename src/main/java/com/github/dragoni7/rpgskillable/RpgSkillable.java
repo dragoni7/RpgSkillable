@@ -64,7 +64,6 @@ public class RpgSkillable
     	NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation("rpgskillable", "main_channel"), () -> "1.0", s -> true, s -> true);
     	NETWORK.registerMessage(ID++, SyncToClient.class, SyncToClient::encode, SyncToClient::new, SyncToClient::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     	NETWORK.registerMessage(ID++, RequestLevelUp.class, RequestLevelUp::encode, RequestLevelUp::new, RequestLevelUp::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    	
     	MinecraftForge.EVENT_BUS.register(new EventHandler());
     	MinecraftForge.EVENT_BUS.register(new Commands());
     	

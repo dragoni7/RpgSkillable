@@ -14,7 +14,7 @@ public class EffectStrengthened extends MobEffect {
 
 	protected EffectStrengthened() {
 		super(MobEffectCategory.BENEFICIAL, 0Xb3785f);
-		this.addAttributeModifier(Attributes.ATTACK_SPEED, ATTACK_SPEED_UUID.toString(), -0.1f, AttributeModifier.Operation.ADDITION);
+		this.addAttributeModifier(Attributes.ATTACK_SPEED, ATTACK_SPEED_UUID.toString(), -0.05f, AttributeModifier.Operation.ADDITION);
 		this.addAttributeModifier(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_UUID.toString(), 1.0f, AttributeModifier.Operation.ADDITION);
 	}
 }

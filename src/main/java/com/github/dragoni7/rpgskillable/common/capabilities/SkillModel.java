@@ -169,6 +169,11 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 	}
 
 	public boolean canUseItemInSlot(Player player, ItemStack itemStack, EquipmentSlot slot) {
+		
+		// check if blacklisted
+		if (isBlacklisted(ForgeRegistries.ITEMS.getKey(itemStack.getItem()))) {
+			return true;
+		}
 
 		// if using attribute locks, check first
 		if (Config.getIfUseAttributeLocks()) {
@@ -259,6 +264,11 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 	}
 
 	private boolean canUse(Player player, ResourceLocation resource) {
+		
+		// check if blacklisted
+		if (isBlacklisted(resource))  {
+			return true;
+		}
 
 		Requirement[] requirements = Config.getItemRequirements(resource);
 
@@ -315,6 +325,10 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 
 	public void copyForRespawn(SkillModel oldStore) {
 		this.deserializeNBT(oldStore.serializeNBT());
+	}
+	
+	public static boolean isBlacklisted(ResourceLocation loc) {
+		return Config.getBlacklist().contains(loc.toString());
 	}
 
 	@Override
