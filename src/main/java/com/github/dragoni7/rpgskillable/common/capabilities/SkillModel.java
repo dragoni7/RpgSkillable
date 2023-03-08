@@ -170,13 +170,31 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 
 	public boolean canUseItemInSlot(Player player, ItemStack itemStack, EquipmentSlot slot) {
 		
+		ResourceLocation itemLoc = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
+		
 		// check if blacklisted
-		if (isBlacklisted(ForgeRegistries.ITEMS.getKey(itemStack.getItem()))) {
+		if (isBlacklisted(itemLoc)) {
 			return true;
 		}
+		
+		// check override skill locks
+		Requirement[] requirements = Config.getItemRequirements(itemLoc);
 
-		// if using attribute locks, check first
-		if (Config.getIfUseAttributeLocks()) {
+		if (requirements != null) {
+			for (Requirement requirement : requirements) {
+
+				if (getSkillLevel(requirement.getSkill()) < requirement.getLevel()) {
+
+					if (player instanceof ServerPlayer) {
+						displayUnmetRequirementMessage((ServerPlayer) player);
+					}
+
+					return false;
+				}
+			}
+		}
+		// check attribute skill locks if not overriden
+		else if (Config.getIfUseAttributeLocks()) {
 
 			Multimap<Attribute, AttributeModifier> attributeModifiers = itemStack.getAttributeModifiers(slot);
 
@@ -259,8 +277,7 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 			}
 		}
 		
-		// if no attribute locks and no enchantment locks, check for manually set skill locks.
-		return canUseItem(player, itemStack);
+		return true;
 	}
 
 	private boolean canUse(Player player, ResourceLocation resource) {

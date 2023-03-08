@@ -31,7 +31,7 @@ public class Config {
 	private static final ForgeConfigSpec.DoubleValue MIND_OMIT;
 	private static final ForgeConfigSpec.IntValue EFFECT_PER_LEVEL;
 	
-	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SKILL_LOCKS;
+	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> OVERRIDE_SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENCHANT_SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ATTRIBUTE_SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> IGNORED;
@@ -52,7 +52,7 @@ public class Config {
 	private static double mindOmit;
 	private static int effectPerLevel;
 	
-	private static final Map<String, Requirement[]> skillLocks = new HashMap<>();
+	private static final Map<String, Requirement[]> overrideSkillLocks = new HashMap<>();
 	private static final Map<String, Requirement[]> enchantSkillLocks = new HashMap<>();
 	private static final Map<String, Requirement[]> attributeSkillLocks = new HashMap<>();
 	private static final List<String> ignored = new ArrayList<>();
@@ -79,11 +79,11 @@ public class Config {
         builder.comment("Maximum levels the player can have. This is the sum of all skill levels.");
         MAXIMUM_LEVEL_TOTAL = builder.defineInRange("maximumLevelTotal", 66, 6, Integer.MAX_VALUE);
         
-        builder.comment("How many levels are required per level of positive skill effect. Example: setting this to 6 will grant a level of positive effect ever 6 levels in that skill.");
+        builder.comment("How many levels are required per level of positive skill effect. Example: setting this to 6 will grant a level of positive effect every 6 levels in that skill.");
         EFFECT_PER_LEVEL = builder.defineInRange("effectPerLevel", 6, 1, 100);
         
-        builder.comment("Manually set skill requirements for blocks, items, or riding entities. Can be used alongside attribute skill locks, though overlap should be avoided.", "Format: mod:id skill:level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
-        SKILL_LOCKS = builder.defineList("skillLocks", Arrays.asList(
+        builder.comment("skill requirements for blocks, items, or riding entities. Can be used to override items affected by attribute skill locks Ex. override skill lock of a sword to a specific value.", "Format: mod:id skill:level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
+        OVERRIDE_SKILL_LOCKS = builder.defineList("overrideSkillLocks", Arrays.asList(
         		"ars_nouveau:scribes_table intelligence:10",
         		"ars_nouveau:alteration_table intelligence:10",
         		"ars_nouveau:imbuement_chamber intelligence:10",
@@ -236,10 +236,10 @@ public class Config {
         builder.comment("How much to increase enchantment requirement per enchantment level.");
         ENCHANT_LEVEL_INCREASE = builder.defineInRange("enchantLevelIncrease", 4, 1, 100);
         
-        builder.comment("Use the attribute locks list to lock item usage based on their attributes and skill level. Requirements are checked for attributes first before manually set skill locks. Useful if you're lazy and don't want manually set skill locks for every gear item.");
+        builder.comment("Use the attribute locks list to lock item usage based on their attributes.");
         USE_ATTRIBUTE_LOCKS = builder.define("useAttributeLocks", true);
         
-        builder.comment("Skill requirements for attributes. Used if useAttributeLocks is true.", "Format: attribute skill:level_required_per_attribute_level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
+        builder.comment("Skill requirements for attributes. Used if useAttributeLocks is true. Items affected by this will be overriden by the skill locks list above.", "Format: attribute skill:level_required_per_attribute_level", "Valid skills: vigor, endurance, strength, dexterity, mind, intelligence");
         ATTRIBUTE_SKILL_LOCKS = builder.defineList("attributeSkillLocks", Arrays.asList("generic.attack_damage strength:1", "generic.armor endurance:2", "generic.attack_speed dexterity:5", "generic.movement_speed dexterity:2", "generic.armor_toughness vigor:3", "ars_nouveau.perk.mana_regen mind:5", "ars_nouveau.perk.spell_damage intelligence:1", "ars_nouveau.perk.flat_max_mana mind:0.1", "attack_range dexterity:4"), obj -> true);
         
         builder.comment("Attribute values under this number will be omitted from vigor skill locks.");
@@ -284,7 +284,7 @@ public class Config {
 		mindOmit = MIND_OMIT.get();
 		effectPerLevel = EFFECT_PER_LEVEL.get();
 		
-        for (String line : SKILL_LOCKS.get())
+        for (String line : OVERRIDE_SKILL_LOCKS.get())
         {
             String[] entry = line.split(" ");
             Requirement[] requirements = new Requirement[entry.length - 1];
@@ -296,7 +296,7 @@ public class Config {
                 requirements[i - 1] = new Requirement(Skill.valueOf(req[0].toUpperCase()), Double.parseDouble(req[1]));
             }
             
-            skillLocks.put(entry[0], requirements);
+            overrideSkillLocks.put(entry[0], requirements);
         }
         
         for (String line : ENCHANT_SKILL_LOCKS.get())
@@ -397,7 +397,7 @@ public class Config {
 	}
 
 	public static Requirement[] getItemRequirements(ResourceLocation key) {
-		return skillLocks.get(key.toString());
+		return overrideSkillLocks.get(key.toString());
 	}
 	
 	public static Requirement[] getEnchantmentRequirements(ResourceLocation key) {

@@ -28,28 +28,19 @@ public class Tooltip {
 	@SubscribeEvent
 	public void onTooltipDisplay(ItemTooltipEvent event) {
 		
-		if (Minecraft.getInstance().player != null) {
+		if (Minecraft.getInstance().player != null && event.getEntity() != null) {
 			
 			ItemStack itemStack = event.getItemStack();
 			List<Component> tooltips = event.getToolTip();
-			SkillModel skillModel = SkillModel.get();
 			
 			// check if blacklisted
-			if (skillModel.isBlacklisted(ForgeRegistries.ITEMS.getKey(itemStack.getItem()))) {
+			if (SkillModel.isBlacklisted(ForgeRegistries.ITEMS.getKey(itemStack.getItem()))) {
 				return;
 			}
 			
-			// add attribute lock tooltips.
-			if (Config.getIfUseAttributeLocks()) {
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.MAINHAND, itemStack, skillModel);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.OFFHAND, itemStack, skillModel);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.CHEST, itemStack, skillModel);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.FEET, itemStack, skillModel);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.HEAD, itemStack, skillModel);
-				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.LEGS, itemStack, skillModel);
-			}
+			SkillModel skillModel = SkillModel.get();
 			
-			// add manually set skill lock tooltips.
+			// add override skill lock tooltips.
 			Requirement[] requirements = Config.getItemRequirements(ForgeRegistries.ITEMS.getKey(itemStack.getItem()));
 			
 			if (requirements != null) {
@@ -58,6 +49,16 @@ public class Tooltip {
 					ChatFormatting color = skillModel.getSkillLevel(requirement.getSkill()) >= requirement.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
 					tooltips.add(Component.translatable(requirement.getSkill().displayName).append(" " + requirement.getLevel()).withStyle(color));
 				}
+			}
+			
+			// add attribute lock tooltips if not overriden.
+			else if (Config.getIfUseAttributeLocks()) {
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.MAINHAND, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.OFFHAND, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.CHEST, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.FEET, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.HEAD, itemStack, skillModel);
+				addAttributeRestrictionTooltips(tooltips, EquipmentSlot.LEGS, itemStack, skillModel);
 			}
 			
 			// add enchant skill lock tooltips.
