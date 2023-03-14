@@ -15,6 +15,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class Config {
 
 	private static final ForgeConfigSpec CONFIG_SPEC;
+	private static final ForgeConfigSpec CLIENT_CONFIG_SPEC;
 	private static final ForgeConfigSpec.BooleanValue DEATH_RESET;
 	private static final ForgeConfigSpec.BooleanValue EFFECT_DETRIMENT;
 	private static final ForgeConfigSpec.BooleanValue USE_ATTRIBUTE_LOCKS;
@@ -36,6 +37,10 @@ public class Config {
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ATTRIBUTE_SKILL_LOCKS;
 	private static final ForgeConfigSpec.ConfigValue<List<? extends String>> IGNORED;
 	
+	private static final ForgeConfigSpec.ConfigValue<List<? extends Integer>> INV_TAB_OFFSET;
+	private static final ForgeConfigSpec.ConfigValue<List<? extends Integer>> SKILL_TAB_OFFSET;
+	private static final ForgeConfigSpec.BooleanValue CREATIVE_HIDDEN;
+	
 	private static boolean deathReset;
 	private static boolean effectDetriment;
 	private static boolean useAttributeLocks;
@@ -56,6 +61,10 @@ public class Config {
 	private static final Map<String, Requirement[]> enchantSkillLocks = new HashMap<>();
 	private static final Map<String, Requirement[]> attributeSkillLocks = new HashMap<>();
 	private static final List<String> ignored = new ArrayList<>();
+	
+	private static final List<Integer> invTabOffset = new ArrayList<>();
+	private static final List<Integer> skillTabOffset = new ArrayList<>();
+	private static boolean creativeHidden;
 	
 	static {
 		
@@ -264,6 +273,16 @@ public class Config {
         IGNORED = builder.defineList("ignored", Arrays.asList("minecraft:wooden_axe"), obj -> true);
         
         CONFIG_SPEC = builder.build();
+        
+        builder = new ForgeConfigSpec.Builder();
+        
+        builder.comment("x and y offsets for the inventory tabs. Offsets start from the top left corner of the inventory screen. Default: [56, -27] [25, -27]");
+        INV_TAB_OFFSET = builder.defineList("inv_tab_offset", Arrays.asList(25,-27), obj -> true);
+        SKILL_TAB_OFFSET = builder.defineList("skill_tab_offset", Arrays.asList(56,-27), obj -> true);
+        builder.comment("Should the skill tab be hidden while in creative mode?");
+        CREATIVE_HIDDEN = builder.define("creativeHidden", true);
+        
+        CLIENT_CONFIG_SPEC = builder.build();
 	}
 	
 	public static void load() {
@@ -333,6 +352,12 @@ public class Config {
         {   
             ignored.add(line);
         }
+	}
+	
+	public static void loadClient() {
+		invTabOffset.addAll(INV_TAB_OFFSET.get());
+		skillTabOffset.addAll(SKILL_TAB_OFFSET.get());
+		creativeHidden = CREATIVE_HIDDEN.get();
 	}
 
 	public static boolean getDeathReset() {
@@ -414,5 +439,29 @@ public class Config {
 
 	public static ForgeConfigSpec getConfig() {
 		return CONFIG_SPEC;
+	}
+	
+	public static int getInvXOffset() {
+		return invTabOffset.get(0);
+	}
+	
+	public static int getInvYOffset() {
+		return invTabOffset.get(1);
+	}
+	
+	public static int getSkillXOffset() {
+		return skillTabOffset.get(0);
+	}
+	
+	public static int getSkillYOffset() {
+		return skillTabOffset.get(1);
+	}
+	
+	public static boolean getIfCreativeHidden() {
+		return creativeHidden;
+	}
+	
+	public static ForgeConfigSpec getClientConfig() {
+		return CLIENT_CONFIG_SPEC;
 	}
 }

@@ -37,7 +37,7 @@ public class TabButton extends AbstractButton {
         	RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     
             blit(stack, x, y, selected ? 31 : 0, 166, width, height);
-            blit(stack, x + (selected ? 8 : 10), y + 6, 240, 128 + type.iconIndex * 16, 16, 16);
+            blit(stack, x + 10, y + 6, 240, 128 + type.iconIndex * 16, 16, 16);
         }
     }
     

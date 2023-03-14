@@ -55,6 +55,7 @@ public class RpgSkillable
         modEventBus.addListener(this::clientSetup);
         
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.getConfig());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.getClientConfig());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -75,6 +76,7 @@ public class RpgSkillable
     }
     
     private void clientSetup(final FMLClientSetupEvent event) {
+    	Config.loadClient();
     	MinecraftForge.EVENT_BUS.register(new InventoryTabs());
     	MinecraftForge.EVENT_BUS.register(new KeyHandler());
     	MinecraftForge.EVENT_BUS.register(new Tooltip());
