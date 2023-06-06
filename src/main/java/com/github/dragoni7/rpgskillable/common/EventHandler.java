@@ -240,10 +240,9 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onPlayerClone(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			event.getOriginal().reviveCaps();
-			SkillModel.get(event.getEntity()).copyForRespawn(SkillModel.get(event.getOriginal()));
-		}
+		event.getOriginal().reviveCaps();
+		SkillModel.get(event.getEntity()).copyForRespawn(SkillModel.get(event.getOriginal()));
+		event.getOriginal().invalidateCaps();
 	}
 
 	@SubscribeEvent

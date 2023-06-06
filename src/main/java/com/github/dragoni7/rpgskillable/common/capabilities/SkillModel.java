@@ -48,7 +48,7 @@ public class SkillModel implements INBTSerializable<CompoundTag> {
 
 	public static final int EFFECT_DURATION = Integer.MAX_VALUE;
 	
-	private static final int UPDATE_INTERVAL = 6000; // 5 mins
+	private static final int UPDATE_INTERVAL = 1200; // 1 min
 
 	private int[] skillLevels = new int[] { 1, 1, 1, 1, 1, 1 };
 	
